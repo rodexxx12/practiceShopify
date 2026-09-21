@@ -81,9 +81,7 @@
           "blocks": {}
         }
       },
-      "custom_css": [
-        ".header-wrapper,.header {border-radius: 999px; /* pill shape like your reference image */ overflow: hidden; margin: 20px auto; max-width: 95%;}"
-      ],
+      "custom_css": [],
       "settings": {
         "logo_position": "center",
         "menu_position": "left",
