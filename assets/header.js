@@ -84,29 +84,19 @@ class HeaderComponent extends Component {
     }
   });
 
-  /**
-   * Observes the header while scrolling the viewport to track when its actively sticky
-   * @param {Boolean} alwaysSticky - Determines if we need to observe when the header is offscreen
-   */
-  #observeStickyPosition = (alwaysSticky = true) => {
+  /** Observes the header position for the existing scroll-up sticky mode. */
+  #observeStickyPosition = () => {
     if (this.#intersectionObserver) return;
 
     const config = {
-      threshold: alwaysSticky ? 1 : 0,
+      threshold: 0,
       root: getIntersectionRoot(),
     };
 
     this.#intersectionObserver = new IntersectionObserver(([entry]) => {
       if (!entry) return;
 
-      const { isIntersecting } = entry;
-
-      if (alwaysSticky) {
-        this.dataset.stickyState = isIntersecting ? 'inactive' : 'active';
-        if (this.dataset.themeColor) changeMetaThemeColor(this.dataset.themeColor);
-      } else {
-        this.#offscreen = !isIntersecting || this.dataset.stickyState === 'active';
-      }
+      this.#offscreen = !entry.isIntersecting || this.dataset.stickyState === 'active';
     }, config);
 
     this.#intersectionObserver.observe(this);
@@ -159,7 +149,7 @@ class HeaderComponent extends Component {
     // Recreate IntersectionObserver with the new root
     this.#intersectionObserver?.disconnect();
     this.#intersectionObserver = null;
-    this.#observeStickyPosition(stickyMode === 'always');
+    if (stickyMode === 'scroll-up') this.#observeStickyPosition();
   };
 
   #handleWindowScroll = () => {
@@ -176,9 +166,10 @@ class HeaderComponent extends Component {
     if (!this.#offscreen && stickyMode !== 'always') return;
 
     const scrollTop = getScrollTop();
-    const headerTop = this.getBoundingClientRect().top;
     const isScrollingUp = scrollTop < this.#lastScrollTop;
-    const isAtTop = headerTop >= 0;
+    // Use the scroll position for the always-sticky state. Measuring the header
+    // itself is unstable because its floating visual transform changes its rect.
+    const isAtTop = scrollTop <= 1;
 
     if (this.#timeout) {
       clearTimeout(this.#timeout);
@@ -186,6 +177,12 @@ class HeaderComponent extends Component {
     }
 
     if (stickyMode === 'always') {
+      const nextStickyState = isAtTop ? 'inactive' : 'active';
+      if (this.dataset.stickyState !== nextStickyState) {
+        this.dataset.stickyState = nextStickyState;
+        if (this.dataset.themeColor) changeMetaThemeColor(this.dataset.themeColor);
+      }
+
       if (isAtTop) {
         this.dataset.scrollDirection = 'none';
       } else if (isScrollingUp) {
@@ -228,11 +225,15 @@ class HeaderComponent extends Component {
 
     const stickyMode = this.getAttribute('sticky');
     if (stickyMode) {
-      this.#observeStickyPosition(stickyMode === 'always');
+      if (stickyMode === 'scroll-up') {
+        this.#observeStickyPosition();
+      }
 
       if (stickyMode === 'scroll-up' || stickyMode === 'always') {
         this.#scrollContainer = getScrollEventTarget();
         this.#scrollContainer.addEventListener('scroll', this.#handleWindowScroll);
+
+        if (stickyMode === 'always') this.#updateScrollState();
       }
 
       scrollContainerMediaQuery.addEventListener('change', this.#handleBreakpointChange);

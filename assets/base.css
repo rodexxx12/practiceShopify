@@ -339,7 +339,7 @@ p:empty {
   grid-column: 2;
 }
 
-/* Make the actual section background transparent, and instead apply it to a separate sibling element to enable stacking with hero shadow  */
+/* Make the actual section background transparent, and instead apply it to a separate sibling element to enable stacking with hero shadow 
 .shopify-section:not(.header-section) :is(.section, .cart-summary) {
   background: transparent;
 }
@@ -354,7 +354,7 @@ p:empty {
   inset: 0;
   z-index: var(--layer-section-background);
   background-color: var(--color-background);
-}
+} */
 
 /* For page-width sections, all content goes in the center column */
 .section--page-width > * {
@@ -1054,11 +1054,11 @@ summary:hover {
   flex: 1;
 }
 
-.sticky-content {
+/* .sticky-content {
   position: sticky;
   top: var(--sticky-header-offset, 0);
   z-index: var(--layer-flat);
-}
+} */
 
 @media screen and (min-width: 750px) {
   .sticky-content--desktop,
@@ -1833,6 +1833,6 @@ main > .shopify-section:first-child .section:not(.disable-section-top-offset) {
 
   /* Make sticky content immediately stick to the top of the page */
   .sticky-content {
-    margin-top: calc(var(--header-height) * var(--transparent-header-offset-boolean) * -1);
+    margin-top: calc(var(--header-height) * var(--transparent-header-offset-boolean) * -2);
   }
 }
