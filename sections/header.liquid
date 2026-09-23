@@ -661,7 +661,7 @@
   }
 
   .header[data-sticky-state='active'] {
-    view-transition-name: sticky-header;
+    view-transition-name: none;
   }
 
   /* Compact, floating treatment for the existing sticky header state. */
@@ -1127,6 +1127,39 @@
   border-radius: 50px 50px 50px 50px;
 }
 /* --- End rounded header --- */
+
+/* Floating navigation pill */
+#header-group > .header-section:has(> #header-component) {
+  box-sizing: border-box;
+  padding: 12px 16px 0;
+  background: transparent;
+}
+
+#header-component {
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  max-width: 1200px;
+  margin-inline: auto;
+  border-radius: 28px;
+  background-color: var(--color-background-top-row, #fff);
+  box-shadow: 0 10px 32px rgb(0 0 0 / 10%);
+}
+
+#header-component .header__underlay-closed,
+#header-component .header__underlay-open {
+  border-radius: inherit;
+}
+
+@media screen and (max-width: 749px) {
+  #header-group > .header-section:has(> #header-component) {
+    padding: 10px 12px 0;
+  }
+
+  #header-component {
+    border-radius: 22px;
+  }
+}
 
   /* Dropdown Localization Styles */
   .dropdown-localization__button {
